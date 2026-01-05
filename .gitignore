@@ -1,16 +1,16 @@
 ```
 # Compiled binaries
+api-gateway/api-gateway
+censor-service/censor-service
+comment-service/comment-service
+
+# Go build artifacts
 *.exe
 *.dll
 *.so
 *.a
 *.obj
 *.out
-
-# Go build artifacts
-api-gateway/api-gateway
-censor-service/censor-service
-comment-service/comment-service
 
 # Dependencies
 go.sum
@@ -35,7 +35,8 @@ coverage/
 htmlcov/
 .coverage
 
-# System files
-.DS_Store
-Thumbs.db
+# Build directories
+build/
+dist/
+target/
 ```
