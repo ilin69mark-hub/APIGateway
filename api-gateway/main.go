@@ -228,18 +228,12 @@ func newsDetailHandler(w http.ResponseWriter, r *http.Request) {
 		PubTime: time.Now(),
 	}
 
-	// Get comments for this news (mock implementation)
-	comments := []Comment{
-		{
-			ID:     1,
-			NewsID: newsID,
-			Text:   "This is a great news article!",
-		},
-		{
-			ID:     2,
-			NewsID: newsID,
-			Text:   "Thanks for sharing this information",
-		},
+	// Get comments for this news from CommentService
+	comments, err := getCommentsForNews(newsID, getRequestID(r))
+	if err != nil {
+		log.Printf("Error fetching comments for news %d: %v", newsID, err)
+		// Continue with empty comments array
+		comments = []Comment{}
 	}
 
 	detailedNews := NewsFullDetailed{
@@ -249,6 +243,41 @@ func newsDetailHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(detailedNews)
+}
+
+func getCommentsForNews(newsID int, requestID string) ([]Comment, error) {
+	// Create HTTP request to CommentService to get comments for news
+	client := &http.Client{Timeout: 10 * time.Second}
+	
+	// Build the URL to get comments for specific news
+	url := fmt.Sprintf("http://localhost:8081/comments?news_id=%d", newsID)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	
+	// Add request ID header
+	req.Header.Set("X-Request-ID", requestID)
+	
+	// Make the request
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	
+	// Check response status
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("comment service returned status: %d", resp.StatusCode)
+	}
+	
+	// Decode the response
+	var comments []Comment
+	if err := json.NewDecoder(resp.Body).Decode(&comments); err != nil {
+		return nil, err
+	}
+	
+	return comments, nil
 }
 
 func commentHandler(w http.ResponseWriter, r *http.Request) {
