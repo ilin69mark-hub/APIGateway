@@ -1,0 +1,41 @@
+```
+# Compiled binaries
+*.exe
+*.dll
+*.so
+*.a
+*.obj
+*.out
+
+# Go build artifacts
+api-gateway/api-gateway
+censor-service/censor-service
+comment-service/comment-service
+
+# Dependencies
+go.sum
+go.mod
+
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+
+# Environment
+.env
+.env.local
+*.env.*
+
+# Editors
+.vscode/
+.idea/
+
+# Coverage
+coverage/
+htmlcov/
+.coverage
+
+# System files
+.DS_Store
+Thumbs.db
+```
